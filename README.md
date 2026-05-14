@@ -270,13 +270,39 @@ These skills are usually too heavy for:
 
 ## Installation
 
-### Install all skills with skills CLI
+You can install these skills in three common ways:
+
+1. with `skills` CLI
+2. by cloning the repository and copying the `skills/` folders
+3. by using the included install script
+
+The exact target directory depends on your agent environment.
+
+### Where these skills should go
+
+Typical locations are:
+
+| Environment | Typical skills directory |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex local skills | `~/.codex/skills/` or `$CODEX_HOME/skills/` |
+| Project-local agent setup | `<project>/.claude/skills/` or equivalent local skills directory |
+
+If your agent already supports loading a skills repository directly, use that mechanism instead of copying files manually.
+
+### Option 1: install all skills with skills CLI
 
 ```bash
 npx skills add ohwiki/system-structure-skills -g --all
 ```
 
-### Install one skill only
+What this does:
+
+- downloads the repository
+- installs all skills under your global skills directory
+- makes them available by skill name
+
+### Option 1a: install one skill only
 
 ```bash
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-requirements
@@ -285,19 +311,88 @@ npx skills add ohwiki/system-structure-skills -g --skill system-structure-tasks
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-implementation
 ```
 
-### List available skills
+### Option 1b: list available skills
 
 ```bash
 npx skills add ohwiki/system-structure-skills -l
 ```
 
-### Install by cloning
+### Option 2: install by cloning and copying
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/ohwiki/system-structure-skills.git ~/.claude/plugins/system-structure-skills
 ```
 
-Then copy or link the contents under `skills/` into your agent's skills directory if your environment does not support direct repository loading.
+Then copy the individual skill directories under `skills/` into your agent's skills directory.
+
+Example for Claude Code:
+
+```bash
+mkdir -p ~/.claude/skills
+cp -R ~/.claude/plugins/system-structure-skills/skills/* ~/.claude/skills/
+```
+
+Example for Codex local skills:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R ~/.claude/plugins/system-structure-skills/skills/* ~/.codex/skills/
+```
+
+### Option 3: use the included install script
+
+If you already cloned the repository, you can run:
+
+```bash
+cd system-structure-skills
+bash scripts/install.sh
+```
+
+By default, this script installs the skills into:
+
+```bash
+~/.claude/skills
+```
+
+If you want Codex to discover them from `~/.codex/skills`, either copy them there manually or adjust the script for your local environment.
+
+## Verify installation
+
+After installation, confirm that these directories exist in your target skills folder:
+
+```text
+system-structure-requirements/
+system-structure-design/
+system-structure-tasks/
+system-structure-implementation/
+```
+
+You should also be able to invoke them by name:
+
+- `$system-structure-requirements`
+- `$system-structure-design`
+- `$system-structure-tasks`
+- `$system-structure-implementation`
+
+## Quick start after installation
+
+A minimal end-to-end flow looks like this:
+
+1. write requirements
+2. design from requirements
+3. derive tasks from design
+4. implement one approved task at a time
+
+Minimal prompts:
+
+```text
+Use $system-structure-requirements to define the problem before design.
+Use $system-structure-design to produce high-level and detailed design.
+Use $system-structure-tasks to derive executable tasks from the approved design.
+Use $system-structure-implementation to implement one approved task without reshaping the system.
+```
 
 ## Repository structure
 
