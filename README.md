@@ -434,6 +434,20 @@ system-structure-skills/
             └── review-gate.md
 ```
 
+## Examples
+
+Two end-to-end examples are included:
+
+- [examples/theme-toggle-workflow](./examples/theme-toggle-workflow)
+  - frontend-oriented example
+  - add light/dark theme switching
+  - show how state, UI, persistence, and file mapping are handled across all four stages
+
+- [examples/cli-config-support-workflow](./examples/cli-config-support-workflow)
+  - backend/tooling-oriented example
+  - add configuration file support to an existing CLI
+  - show how compatibility, precedence rules, parsing boundaries, and regression protection flow through all four stages
+
 ## Design philosophy
 
 These skills are built around a few hard ideas:
