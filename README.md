@@ -2,18 +2,20 @@
 
 A small skills repository for structure-first AI coding workflows.
 
-These skills are built for one specific goal: before an AI agent writes code, make it understand how the system should be shaped.
+These skills are built for one specific goal: before an AI agent writes code, make it understand how the system should be shaped, then carry that shape through tasks and implementation.
 
-The repository currently includes two skills:
+The repository currently includes three skills:
 
 - `system-structure-design`: produce a two-stage design before implementation
 - `system-structure-tasks`: derive executable tasks from the approved design without inventing new structure
+- `system-structure-implementation`: implement approved tasks without reshaping the system during coding
 
 The workflow is simple:
 
 1. define the system frame with high-level design
 2. refine the internal shape with detailed design
 3. derive tasks that inherit the design instead of redesigning it
+4. implement each task without drifting away from the blueprint
 
 This is meant to reduce a common failure mode in AI coding: the model starts implementing too early, mixes responsibilities, creates arbitrary files, and slowly drifts away from a coherent system shape.
 
@@ -29,6 +31,8 @@ The real problem is usually not that the model cannot code. The problem is that 
 - how those modules break down internally
 - what dependencies are allowed or forbidden
 - where logic should land in files
+- how tasks should inherit the design
+- how coding should preserve the design instead of mutating it
 
 These skills try to solve that problem directly.
 
@@ -72,12 +76,58 @@ It turns the design into executable implementation tasks while preserving:
 
 This skill is intentionally strict: tasks inherit structure. They do not redesign structure.
 
+### `system-structure-implementation`
+
+Use this skill after tasks are approved.
+
+It carries the design and task constraints into coding itself. It is meant for implementation phases where the model must not quietly redesign the system for convenience.
+
+It preserves:
+
+- approved design
+- approved tasks
+- module and unit ownership
+- dependency rules
+- file mappings
+- validation expectations
+
+This skill is intentionally strict: implementation executes structure. It does not redesign structure.
+
+#### What "implementation" means here
+
+In this repository, `implementation` does **not** mean "a business feature implementation written by this repository".
+
+It means the **coding execution phase** of the workflow:
+
+1. design defines the blueprint
+2. tasks define the work packages
+3. implementation executes one approved task in code
+
+The purpose of this skill is to keep the model from drifting during coding. It forces the model to keep asking:
+
+- which approved task is being implemented
+- which module owns this logic
+- which internal unit owns this logic
+- which files should change
+- which dependencies are allowed
+- when coding must stop and go back to design or task planning
+
+Without this stage, models often do the earlier design work correctly, then break structure during coding by:
+
+- putting logic in the wrong module
+- adding ad hoc layers for convenience
+- bypassing dependency boundaries
+- turning shared helpers into dumping grounds
+- silently reshaping the system while "just implementing"
+
+This skill exists to prevent that.
+
 ## Recommended workflow
 
 The intended workflow is:
 
 ```text
-system-structure-design -> review and approve design -> system-structure-tasks -> implementation
+system-structure-design -> review and approve design -> system-structure-tasks -> approve tasks -> system-structure-implementation
 ```
 
 ### Step 1: produce the design
@@ -128,6 +178,30 @@ Chinese example:
 任务必须继承模块边界、内部结构、依赖规则和文件落点，不能在任务阶段重新发明结构。
 ```
 
+### Step 4: implement one task at a time
+
+Example prompt:
+
+```text
+Use $system-structure-implementation to implement the approved task.
+Keep the code inside the approved module, internal unit, dependency rules, and file mapping.
+If the task requires structural redesign, stop and report the blocker.
+```
+
+Chinese example:
+
+```text
+用 $system-structure-implementation 实现已经批准的任务。
+实现必须遵守模块边界、内部单元职责、依赖规则和文件落点；如果需要改结构，先停下来报告，不要直接改写设计。
+```
+
+What this step means in practice:
+
+- it is **not** a fresh architecture discussion
+- it is **not** another task-planning phase
+- it is **not** permission to invent new structure while coding
+- it **is** the phase where the model writes code under the constraints already decided earlier
+
 ## When to use these skills
 
 Use these skills when:
@@ -137,6 +211,7 @@ Use these skills when:
 - a new service or subsystem is being introduced
 - you want the model to stop guessing where logic belongs
 - you want tasks that trace back to design
+- you want coding to preserve the approved structure instead of mutating it
 
 They are especially useful for:
 
@@ -168,6 +243,7 @@ npx skills add ohwiki/system-structure-skills -g --all
 ```bash
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-design
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-tasks
+npx skills add ohwiki/system-structure-skills -g --skill system-structure-implementation
 ```
 
 ### List available skills
@@ -201,13 +277,20 @@ system-structure-skills/
     │       ├── diagram-guidance.md
     │       ├── review-gate.md
     │       └── system-blueprint-template.md
-    └── system-structure-tasks/
+    ├── system-structure-tasks/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml
+    │   └── references/
+    │       ├── review-gate.md
+    │       └── task-template.md
+    └── system-structure-implementation/
         ├── SKILL.md
         ├── agents/
         │   └── openai.yaml
         └── references/
-            ├── review-gate.md
-            └── task-template.md
+            ├── execution-template.md
+            └── review-gate.md
 ```
 
 ## Design philosophy
@@ -218,6 +301,7 @@ These skills are built around a few hard ideas:
 - both stages must define what they do and what they do not do
 - detailed design must connect structure to files
 - tasks must inherit design rather than silently rewriting it
+- implementation must inherit both design and tasks rather than reshaping the system during coding
 - diagrams help, but structure and file landing points matter more than diagrams
 
 ## License

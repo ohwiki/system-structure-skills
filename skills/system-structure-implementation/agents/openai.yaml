@@ -1,0 +1,4 @@
+interface:
+  display_name: "System Structure Implementation"
+  short_description: "implement from approved structure"
+  default_prompt: "Use $system-structure-implementation to implement code from approved design and tasks without reshaping the system."
