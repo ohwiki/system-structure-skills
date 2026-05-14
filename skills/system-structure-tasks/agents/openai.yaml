@@ -1,0 +1,4 @@
+interface:
+  display_name: "System Structure Tasks"
+  short_description: "tasks from structured design"
+  default_prompt: "Use $system-structure-tasks to derive implementation tasks from approved high-level and detailed design without inventing new structure."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "System Structure Design"
+  short_description: "system-to-files design workflow"
+  default_prompt: "Use $system-structure-design to define system functions, structure layers, boundaries, and file mappings before implementation."
