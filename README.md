@@ -2,20 +2,22 @@
 
 A small skills repository for structure-first AI coding workflows.
 
-These skills are built for one specific goal: before an AI agent writes code, make it understand how the system should be shaped, then carry that shape through tasks and implementation.
+These skills are built for one specific goal: before an AI agent writes code, make it understand the problem, shape the system deliberately, derive tasks from that structure, and then carry the same structure through implementation.
 
-The repository currently includes three skills:
+The repository currently includes four skills:
 
+- `system-structure-requirements`: define stable requirements before design begins
 - `system-structure-design`: produce a two-stage design before implementation
 - `system-structure-tasks`: derive executable tasks from the approved design without inventing new structure
 - `system-structure-implementation`: implement approved tasks without reshaping the system during coding
 
 The workflow is simple:
 
-1. define the system frame with high-level design
-2. refine the internal shape with detailed design
-3. derive tasks that inherit the design instead of redesigning it
-4. implement each task without drifting away from the blueprint
+1. define the problem and acceptance boundaries with requirements
+2. define the system frame with high-level design
+3. refine the internal shape with detailed design
+4. derive tasks that inherit the design instead of redesigning it
+5. implement each task without drifting away from the blueprint
 
 This is meant to reduce a common failure mode in AI coding: the model starts implementing too early, mixes responsibilities, creates arbitrary files, and slowly drifts away from a coherent system shape.
 
@@ -25,8 +27,9 @@ Most AI coding workflows are good at generating code, but weak at preserving sha
 
 The real problem is usually not that the model cannot code. The problem is that it does not have a good blueprint:
 
-- what the system is supposed to do
-- what it is not supposed to do
+- what problem is actually being solved
+- what is in scope and out of scope
+- which existing behaviors must not regress
 - which top-level modules exist
 - how those modules break down internally
 - what dependencies are allowed or forbidden
@@ -38,9 +41,26 @@ These skills try to solve that problem directly.
 
 ## Skills
 
+### `system-structure-requirements`
+
+Use this skill first.
+
+It defines:
+
+- the problem statement
+- the desired outcome
+- actors and triggers
+- scope and non-goals
+- constraints and boundaries
+- inputs and expected outputs
+- acceptance criteria
+- regression protection targets
+
+This skill is intentionally strict: requirements define what must be achieved and protected. They do not choose architecture or file structure.
+
 ### `system-structure-design`
 
-Use this skill before coding.
+Use this skill after requirements are stable.
 
 It produces a two-stage design:
 
@@ -99,9 +119,10 @@ In this repository, `implementation` does **not** mean "a business feature imple
 
 It means the **coding execution phase** of the workflow:
 
-1. design defines the blueprint
-2. tasks define the work packages
-3. implementation executes one approved task in code
+1. requirements define the problem
+2. design defines the blueprint
+3. tasks define the work packages
+4. implementation executes one approved task in code
 
 The purpose of this skill is to keep the model from drifting during coding. It forces the model to keep asking:
 
@@ -127,10 +148,26 @@ This skill exists to prevent that.
 The intended workflow is:
 
 ```text
-system-structure-design -> review and approve design -> system-structure-tasks -> approve tasks -> system-structure-implementation
+system-structure-requirements -> review and approve requirements -> system-structure-design -> review and approve design -> system-structure-tasks -> approve tasks -> system-structure-implementation
 ```
 
-### Step 1: produce the design
+### Step 1: define requirements
+
+Example prompt:
+
+```text
+Use $system-structure-requirements to define the problem, scope, constraints, acceptance criteria, and regression targets before design begins.
+Do not choose architecture or file structure in the requirements phase.
+```
+
+Chinese example:
+
+```text
+用 $system-structure-requirements 先写需求，不要做设计。
+先明确问题、范围、非目标、约束、验收标准和回归保护对象，不要提前决定架构、模块和文件结构。
+```
+
+### Step 2: produce the design
 
 Example prompt:
 
@@ -148,7 +185,7 @@ Chinese example:
 再做详细设计：明确模块内部结构、职责边界、依赖规则、文件落点和详细设计不负责的内容。
 ```
 
-### Step 2: review and approve the design
+### Step 3: review and approve the design
 
 Do not rush into tasks.
 
@@ -161,7 +198,7 @@ The design should be strong enough that another model can answer without guessin
 - where new logic must not go
 - which files implement which structural units
 
-### Step 3: derive implementation tasks
+### Step 4: derive implementation tasks
 
 Example prompt:
 
@@ -178,7 +215,7 @@ Chinese example:
 任务必须继承模块边界、内部结构、依赖规则和文件落点，不能在任务阶段重新发明结构。
 ```
 
-### Step 4: implement one task at a time
+### Step 5: implement one task at a time
 
 Example prompt:
 
@@ -215,6 +252,7 @@ Use these skills when:
 
 They are especially useful for:
 
+- requirements clarification before architecture work
 - architecture or structure planning
 - medium or large feature work
 - refactors that must preserve boundaries
@@ -241,6 +279,7 @@ npx skills add ohwiki/system-structure-skills -g --all
 ### Install one skill only
 
 ```bash
+npx skills add ohwiki/system-structure-skills -g --skill system-structure-requirements
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-design
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-tasks
 npx skills add ohwiki/system-structure-skills -g --skill system-structure-implementation
@@ -269,6 +308,13 @@ system-structure-skills/
 ├── scripts/
 │   └── install.sh
 └── skills/
+    ├── system-structure-requirements/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml
+    │   └── references/
+    │       ├── requirements-template.md
+    │       └── review-gate.md
     ├── system-structure-design/
     │   ├── SKILL.md
     │   ├── agents/
@@ -297,8 +343,10 @@ system-structure-skills/
 
 These skills are built around a few hard ideas:
 
+- requirements, design, tasks, and implementation are different stages
+- each stage must define what it does and what it does not do
+- requirements define the problem and acceptance boundaries without prematurely choosing architecture
 - high-level design and detailed design are different stages
-- both stages must define what they do and what they do not do
 - detailed design must connect structure to files
 - tasks must inherit design rather than silently rewriting it
 - implementation must inherit both design and tasks rather than reshaping the system during coding

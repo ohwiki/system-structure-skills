@@ -1,0 +1,4 @@
+interface:
+  display_name: "System Structure Requirements"
+  short_description: "requirements before design"
+  default_prompt: "Use $system-structure-requirements to define the problem, scope, constraints, and acceptance boundaries before design begins."
