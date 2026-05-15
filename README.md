@@ -448,6 +448,11 @@ Two end-to-end examples are included:
   - add configuration file support to an existing CLI
   - show how compatibility, precedence rules, parsing boundaries, and regression protection flow through all four stages
 
+- [examples/legacy-module-refactor-workflow](./examples/legacy-module-refactor-workflow)
+  - maintenance/refactor-oriented example
+  - split an oversized existing module into service + adapter + policy
+  - show how to preserve observable behavior while improving structure across all four stages
+
 ## Design philosophy
 
 These skills are built around a few hard ideas:

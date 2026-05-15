@@ -389,6 +389,7 @@ system-structure-skills/
 
 - [examples/theme-toggle-workflow](./examples/theme-toggle-workflow)
 - [examples/cli-config-support-workflow](./examples/cli-config-support-workflow)
+- [examples/legacy-module-refactor-workflow](./examples/legacy-module-refactor-workflow)
 
 其中：
 
@@ -399,6 +400,10 @@ system-structure-skills/
 - `cli-config-support-workflow` 是偏后端 / 工具链的例子：
   - 给现有 CLI 工具增加配置文件支持
   - 展示兼容性、优先级规则、解析边界和回归保护如何贯穿四个阶段
+
+- `legacy-module-refactor-workflow` 是偏维护型重构的例子：
+  - 把一个臃肿旧模块拆成 `service + adapter + policy`
+  - 展示如何在保护既有行为的前提下，重划结构、职责和文件落点
 
 它们都演示了一个真实需求如何依次经过：
 
